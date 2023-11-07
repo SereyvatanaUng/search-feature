@@ -28,7 +28,6 @@ function App() {
         <h1>Loading</h1>
       ) : (
         <>
-          <h1>{products.results}</h1>
           <ProductList products={products} />
         </>
       )}
