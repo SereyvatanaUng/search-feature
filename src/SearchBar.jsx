@@ -8,7 +8,6 @@ function SearchBar({ posts, setSearchResults }) {
   };
 
   const handleSearchChange = (e) => {
-    console.log("trigger");
     if (!e.target.value) return setSearchResults(posts);
 
     const resultsArray = posts.filter(
@@ -16,11 +15,12 @@ function SearchBar({ posts, setSearchResults }) {
         post.title.includes(e.target.value) ||
         post.body.includes(e.target.value)
     );
+    console.log(resultsArray);
 
     setSearchResults(resultsArray);
   };
 
-  const debouncedSearchChange = debounce(handleSearchChange, 2000);
+  const debouncedSearchChange = debounce(handleSearchChange, 500);
 
   return (
     <header>

@@ -1,29 +1,38 @@
-import { getPosts } from "./api/axios";
-import { useState, useEffect } from "react";
-import SearchBar from "./SearchBar";
-import ListPage from "./ListPage";
+import { useEffect, useState } from "react";
+import { getProducts } from "./api/API";
+import ProductList from "./ProductList";
 
 function App() {
-  const [posts, setPosts] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
+  const [products, setProducts] = useState({});
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
 
   useEffect(() => {
-    getPosts()
-      .then((json) => {
-        setPosts(json);
-        return json;
-      })
-      .then((json) => {
-        setSearchResults(json);
-      });
+    // Inside an async function to handle async operations
+    const fetchData = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data.data.docs);
+        console.log(data.data.docs);
+        setLoading(false); // Mark loading as false when the data is fetched successfully
+      } catch (error) {
+        setError(error); // Handle and set the error state
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
-
   return (
     <>
-      <SearchBar posts={posts} setSearchResults={setSearchResults} />
-      <ListPage searchResults={searchResults} />
+      {error && loading ? (
+        <h1>Loading</h1>
+      ) : (
+        <>
+          <h1>{products.results}</h1>
+          <ProductList products={products} />
+        </>
+      )}
     </>
   );
 }
-
 export default App;
