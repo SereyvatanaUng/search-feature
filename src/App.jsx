@@ -11,9 +11,9 @@ function App() {
     // Inside an async function to handle async operations
     const fetchData = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data.data.docs);
-        console.log(data.data.docs);
+        const response = await getProducts(5);
+        setProducts(response.data);
+        console.log(response);
         setLoading(false); // Mark loading as false when the data is fetched successfully
       } catch (error) {
         setError(error); // Handle and set the error state

@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 
 export default function Product({ product }) {
   // Truncate the description to 50 characters with an ellipsis
-  const textWrap = 35;
+  const textWrap = 25;
   const truncatedDescription =
     product.description.length > textWrap
       ? `${product.description.slice(0, textWrap)}...`
@@ -16,7 +16,13 @@ export default function Product({ product }) {
   const formatUnitPrice = product.unitPrice.toLocaleString();
 
   return (
-    <Card sx={{ maxWidth: 140 }}>
+    <Card
+      sx={{
+        maxWidth: 140,
+        "&:hover": { backgroundColor: "#ddd" },
+        transition: "100ms ease-in-out",
+      }}
+    >
       <CardMedia
         sx={{ width: 140, height: 140 }}
         image="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"
@@ -46,7 +52,9 @@ export default function Product({ product }) {
             {product.soldAmount} solds
           </Typography>
         </Box>
-        <Typography variant="subtitle2">Seller</Typography>
+        <Typography sx={{ cursor: "pointer" }} variant="subtitle2">
+          Seller
+        </Typography>
       </CardContent>
     </Card>
   );
