@@ -1,37 +1,47 @@
-import { useEffect, useState } from "react";
-import { getProducts } from "./api/API";
-import ProductList from "./ProductList";
+import { useCallback, useRef, useState } from "react";
+import useScroll from "./useScroll";
 
 function App() {
-  const [products, setProducts] = useState({});
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [pageNumber, setPageNumber] = useState(1);
+  const { products, hasMore, loading, error } = useScroll(pageNumber);
 
-  useEffect(() => {
-    // Inside an async function to handle async operations
-    const fetchData = async () => {
-      try {
-        const response = await getProducts(5);
-        setProducts(response.data);
-        console.log(response);
-        setLoading(false); // Mark loading as false when the data is fetched successfully
-      } catch (error) {
-        setError(error); // Handle and set the error state
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const observer = useRef();
+  const lastProductElementRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
   return (
     <>
-      {error && loading ? (
-        <h1>Loading</h1>
-      ) : (
-        <>
-          <ProductList products={products} />
-        </>
-      )}
+      {products.map((product, index) => {
+        const uniqueKey = product._id + index; // Combining product ID with index for unique key
+
+        if (products.length === index + 1) {
+          return (
+            <div ref={lastProductElementRef} key={uniqueKey}>
+              {index} - {product.title}
+            </div>
+          );
+        } else {
+          return (
+            <div key={uniqueKey}>
+              {index} - {product.title}
+            </div>
+          );
+        }
+      })}
+      <div>{loading && "Loading..."}</div>
+      <div>{error && "Error"}</div>
     </>
   );
 }
+
 export default App;
