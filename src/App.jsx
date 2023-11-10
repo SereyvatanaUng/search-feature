@@ -1,5 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 import useScroll from "./useScroll";
+import Product from "./Product";
+
+import "./styles/Product.css";
+import Box from "@mui/material/Box";
+import SearchBar from "./SearchBar";
 
 function App() {
   const [pageNumber, setPageNumber] = useState(1);
@@ -21,24 +26,28 @@ function App() {
   );
   return (
     <>
-      {products.map((product, index) => {
-        const uniqueKey = product._id + index; // Combining product ID with index for unique key
+      <SearchBar />
+      <Box
+        sx={{ display: "flex", justifyContent: "center", padding: "1rem 0" }}
+      >
+        <div className="container">
+          {products.map((product, index) => {
+            // Avoid dup
+            const uniqueKey = product._id + index; // Combining product ID with index for unique key
 
-        if (products.length === index + 1) {
-          return (
-            <div ref={lastProductElementRef} key={uniqueKey}>
-              {index} - {product.title}
-            </div>
-          );
-        } else {
-          return (
-            <div key={uniqueKey}>
-              {index} - {product.title}
-            </div>
-          );
-        }
-      })}
-      <div>{loading && "Loading..."}</div>
+            if (products.length === index + 1) {
+              return (
+                <div ref={lastProductElementRef} key={uniqueKey}>
+                  <Product product={product} />
+                </div>
+              );
+            } else {
+              return <Product product={product} key={uniqueKey} />;
+            }
+          })}
+        </div>
+      </Box>
+      <h1>{loading && "Loading..."}</h1>
       <div>{error && "Error"}</div>
     </>
   );
